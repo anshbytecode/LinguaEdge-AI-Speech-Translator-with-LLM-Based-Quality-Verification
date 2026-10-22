@@ -19,8 +19,8 @@
 10. **Settings & Personalization**: Language defaults, auto-detect language, microphone and audio volume gains, strictness levels, quantization profiles, privacy retention toggles, accessibility font sizes (Regular / Large / Extra Large), and theme profiles (Dark Cyber-Edge, OLED Black, Light Clean).
 
 ---
-
-
+Deployed:
+https://lingua-edge-ai-speech-translator-wi.vercel.app/
 ## 📄 License & Attribution
 © 2026 Anshul Bhilare. All rights reserved.
 Licensed under the MIT License.
