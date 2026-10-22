@@ -1,11 +1,7 @@
 # 🌐 LinguaEdge: Offline Edge-AI Speech Translator with LLM-Based Quality Verification
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
-![Edge AI](https://img.shields.io/badge/Architecture-100%25_Offline_Edge_AI-06b6d4?style=flat-square)
-![Quality Verification](https://img.shields.io/badge/LLM_Verification-Hallucination_Audit-10b981?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=flat-square)
 
-> **LinguaEdge** is a client-side Edge-AI speech translation system engineered for zero-cloud, mission-critical, and low-connectivity environments (emergency triage, disaster relief, defense, aviation, and high-security embassies). It pairs **in-browser neural speech translation** with an **autonomous LLM-Based Quality Verification (LQV) Inspector** that flags mistranslations, inverted polarities, numerical discrepancies, and hallucinations before speech synthesis.
+ **LinguaEdge** is a client-side Edge-AI speech translation system engineered for zero-cloud, mission-critical, and low-connectivity environments (emergency triage, disaster relief, defense, aviation, and high-security embassies). It pairs **in-browser neural speech translation** with an **autonomous LLM-Based Quality Verification (LQV) Inspector** that flags mistranslations, inverted polarities, numerical discrepancies, and hallucinations before speech synthesis.
 
 ---
 
