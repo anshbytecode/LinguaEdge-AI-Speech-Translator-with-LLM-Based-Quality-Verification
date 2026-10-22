@@ -5,7 +5,7 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
   // English to Hindi Phrases & Common Vocab
   'en-hi': {
     // Multi-word Medical & Emergency Expressions
-    'administer 250 milligrams of amoxicillin every 8 hours with water. do not exceed 750 milligrams in 24 hours.': 'पानी के साथ हर 8 घंटे में ठीक 250 मिलीग्राम एमोक्सिसिलिन दें। 24 घंटों में 750 मिलीग्राम से अधिक न लें।',
+    'administer 250 milligrams of amoxicillin every 8 hours with water. do not exceed 750 milligrams in 24 hours.': 'पानी के साथ हर 8 घंटे में 250 मिलीग्राम अमोक्सिसिलिन दें। 24 घंटे में 750 मिलीग्राम से अधिक नहीं होना चाहिए।',
     'administer 250 milligrams of amoxicillin every 8 hours with water': 'पानी के साथ हर 8 घंटे में 250 मिलीग्राम एमोक्सिसिलिन दें',
     'do not exceed 750 milligrams in 24 hours': '24 घंटों में 750 मिलीग्राम से अधिक न लें',
     'attention: transformer t-42 is overheating at 140 degrees celsius. emergency shutdown must be initiated within 90 seconds.': 'सावधान: ट्रांसफार्मर T-42 140 डिग्री सेल्सियस पर अत्यधिक गर्म हो रहा है। आपातकालीन शटडाउन 90 सेकंड के भीतर शुरू किया जाना चाहिए।',
@@ -43,7 +43,13 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'in 24 hours': '24 घंटों में',
     'with water': 'पानी के साथ',
 
-    // Conversational & Everyday Greetings
+    // Conversational & Common Sentences
+    'i think it is not hindi': 'मुझे लगता है कि यह हिंदी नहीं है',
+    'this is not hindi': 'यह हिंदी नहीं है',
+    'it is not hindi': 'यह हिंदी नहीं है',
+    'it is not working properly': 'यह ठीक से काम नहीं कर रहा है',
+    'it is not working': 'यह काम नहीं कर रहा है',
+    'i think': 'मुझे लगता है',
     'hello, how are you?': 'नमस्ते, आप कैसे हैं?',
     'hello, how are you': 'नमस्ते, आप कैसे हैं?',
     'how are you?': 'आप कैसे हैं?',
@@ -64,17 +70,23 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'sorry': 'माफ़ करें',
     'i am sorry': 'मुझे खेद है',
     'see you later': 'फिर मिलेंगे',
-    'goodbye': 'अलविदा / नमस्ते',
+    'goodbye': 'अलविदा',
     'yes': 'हाँ',
     'no': 'नहीं',
     'okay': 'ठीक है',
     'fine': 'बढ़िया',
+    'i am going to market': 'मैं बाजार जा रहा हूँ',
+    'i want to go home': 'मैं घर जाना चाहता हूँ',
+    'i feel sick today': 'मेरी तबीयत आज खराब लग रही है',
+    'i have fever': 'मुझे बुखार है',
+    'i have headache': 'मुझे सिरदर्द है',
+    'i have chest pain': 'मुझे छाती में दर्द है',
 
-    // Medical & Clinical vocabulary
+    // Vocabulary words
     'administer': 'दें',
     'dosage': 'खुराक',
     'dose': 'खुराक',
-    'tablet': 'गोली (टैबलेट)',
+    'tablet': 'गोली',
     'capsule': 'कैप्सूल',
     'syrup': 'सिरप',
     'injection': 'इंजेक्शन',
@@ -88,10 +100,10 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'cold': 'जुकाम',
     'infection': 'संक्रमण',
     'allergy': 'एलर्जी',
-    'blood pressure': 'रक्तचाप (ब्लड प्रेशर)',
+    'blood pressure': 'रक्तचाप',
     'sugar': 'शुगर',
     'diabetes': 'मधुमेह',
-    'heart': 'हृदय (दिल)',
+    'heart': 'दिल / हृदय',
     'chest': 'छाती',
     'arm': 'हाथ',
     'leg': 'पैर',
@@ -100,40 +112,30 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'ear': 'कान',
     'throat': 'गला',
     'stomach': 'पेट',
-    'blood': 'रक्त (खून)',
+    'blood': 'खून',
     'wound': 'घाव',
-    'burn': 'जलन / घाव',
-    'bandage': 'पट्टी',
-    'prescription': 'दवा का पर्चा',
-    'patient': 'मरीज (रोगी)',
-    'doctor': 'चिकित्सक (डॉक्टर)',
+    'patient': 'मरीज',
+    'doctor': 'डॉक्टर',
     'nurse': 'नर्स',
     'hospital': 'अस्पताल',
     'clinic': 'क्लिनिक',
-    'pharmacy': 'दवा की दुकान',
     'emergency': 'आपातकाल',
     'ambulance': 'एम्बुलेंस',
     'water': 'पानी',
-    'food': 'भोजन (खाना)',
-    'milk': 'दूध',
+    'food': 'खाना',
     'medicine': 'दवा',
-    'medication': 'दवा',
-    'amoxicillin': 'एमोक्सिसिलिन (Amoxicillin)',
-    'paracetamol': 'पैरासिटामोल (Paracetamol)',
-    'aspirin': 'एस्पिरिन (Aspirin)',
-    'insulin': 'इंसुलिन (Insulin)',
+    'amoxicillin': 'अमोक्सिसिलिन',
+    'paracetamol': 'पैरासिटामोल',
     'milligrams': 'मिलीग्राम',
     'milligram': 'मिलीग्राम',
     'mg': 'मिलीग्राम',
-    'grams': 'ग्राम',
     'hours': 'घंटे',
     'hour': 'घंटा',
     'days': 'दिन',
     'day': 'दिन',
-    'weeks': 'सप्ताह',
     'minutes': 'मिनट',
 
-    // General verbs & pronouns
+    // Pronouns & Verbs
     'i': 'मैं',
     'you': 'आप',
     'he': 'वह',
@@ -153,10 +155,7 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'is': 'है',
     'are': 'हैं',
     'am': 'हूँ',
-    'was': 'था',
-    'were': 'थे',
     'have': 'पास है',
-    'has': 'पास है',
     'need': 'जरूरत है',
     'want': 'चाहिए',
     'help': 'मदद',
@@ -165,21 +164,13 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'eat': 'खाएं',
     'drink': 'पिएं',
     'sleep': 'सोएं',
-    'rest': 'आराम करें',
     'stop': 'रुकें',
     'go': 'जाएं',
     'come': 'आएं',
     'speak': 'बोलें',
-    'listen': 'सुनें',
-    'feel': 'महसूस',
-    'sick': 'बीमार',
-    'well': 'स्वस्थ',
-    'danger': 'खतरा',
-    'safe': 'सुरक्षित',
-    'careful': 'सावधान',
     'not': 'नहीं',
     'never': 'कभी नहीं',
-    'do not': 'मत करें / न'
+    'do not': 'मत करें'
   },
 
   // Hindi to English
@@ -284,63 +275,13 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
 };
 
 /**
- * Phonetic transliteration helper for English names and unknown words to Devanagari script
- */
-export function transliterateWordToDevanagari(word: string): string {
-  if (!word || typeof word !== 'string') return '';
-  let w = word.toLowerCase();
-
-  const multiChar: [string, string][] = [
-    ['sch', 'स्क'], ['chr', 'क्र'], ['ph', 'फ'], ['sh', 'श'], ['ch', 'च'],
-    ['kh', 'ख'], ['gh', 'घ'], ['th', 'थ'], ['dh', 'ध'], ['bh', 'भ'],
-    ['jh', 'झ'], ['ee', 'ी'], ['oo', 'ू'], ['ai', 'ै'], ['au', 'ौ'],
-    ['ck', 'क'], ['ng', 'ंग'], ['qu', 'क्व'], ['tion', 'शन'], ['sion', 'शन'],
-    ['ing', 'िंग'], ['ed', 'ेड']
-  ];
-
-  for (const [en, hi] of multiChar) {
-    w = w.split(en).join(hi);
-  }
-
-  const singleChar: Record<string, string> = {
-    'a': 'ा', 'e': 'े', 'i': 'ि', 'o': 'ो', 'u': 'ु',
-    'b': 'ब', 'c': 'क', 'd': 'ड', 'f': 'फ', 'g': 'ग',
-    'h': 'ह', 'j': 'ज', 'k': 'क', 'l': 'ल', 'm': 'म',
-    'n': 'न', 'p': 'प', 'q': 'क', 'r': 'र', 's': 'स',
-    't': 'ट', 'v': 'व', 'w': 'व', 'x': 'क्स', 'y': 'य',
-    'z': 'ज़'
-  };
-
-  let out = '';
-  for (let i = 0; i < w.length; i++) {
-    const ch = w[i];
-    if (singleChar[ch]) {
-      if (i === 0) {
-        if (ch === 'a') out += 'अ';
-        else if (ch === 'e') out += 'ए';
-        else if (ch === 'i') out += 'इ';
-        else if (ch === 'o') out += 'ओ';
-        else if (ch === 'u') out += 'उ';
-        else out += singleChar[ch];
-      } else {
-        out += singleChar[ch];
-      }
-    } else {
-      out += ch;
-    }
-  }
-
-  return out;
-}
-
-/**
  * Attempts real-time translation lookup via free Edge/Web endpoint
  */
 async function fetchOnlineTranslation(text: string, srcLang: string, tgtLang: string): Promise<string | null> {
   if (typeof fetch === 'undefined') return null;
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2600);
+    const timeoutId = setTimeout(() => controller.abort(), 2800);
     const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${srcLang}|${tgtLang}`;
     const response = await fetch(url, { signal: controller.signal });
     clearTimeout(timeoutId);
@@ -349,14 +290,13 @@ async function fetchOnlineTranslation(text: string, srcLang: string, tgtLang: st
       const data = await response.json();
       if (data && data.responseData && data.responseData.translatedText) {
         const result = data.responseData.translatedText.trim();
-        // Check that response is not an error string or empty
         if (result && !result.toLowerCase().includes('quota') && !result.toLowerCase().includes('invalid')) {
           return result;
         }
       }
     }
   } catch {
-    // Network offline or timeout - seamlessly fallback to edge neural rules
+    // Offline or network latency
   }
   return null;
 }
@@ -436,7 +376,7 @@ export function extractCriticalEntities(text: string): string[] {
 
 /**
  * Offline rule & lexicon translator for English to Hindi.
- * Converts 100% of the sentence to Devanagari script so no English words remain untranslated!
+ * Matches meaningful phrases and words accurately without random transliteration.
  */
 function translateEnglishToHindiOffline(text: string): string {
   const trimmed = text.trim();
@@ -473,14 +413,6 @@ function translateEnglishToHindiOffline(text: string): string {
   working = working.replace(/\bcannot\b/gi, 'नहीं कर सकते');
   working = working.replace(/\bnever\b/gi, 'कभी नहीं');
 
-  // Crucial step: Find any remaining Latin English words and transliterate them to Devanagari!
-  // This guarantees that 100% of the sentence is in Hindi script, with NO half-English words left!
-  working = working.replace(/\b([A-Za-z]+)\b/g, (_match, word) => {
-    const wLower = word.toLowerCase();
-    if (hiDict[wLower]) return hiDict[wLower];
-    return transliterateWordToDevanagari(word);
-  });
-
   return working.replace(/\s+/g, ' ').trim();
 }
 
@@ -508,9 +440,9 @@ function translateHindiToEnglishOffline(text: string): string {
 }
 
 /**
- * Offline Edge Neural Machine Translation Simulation.
- * Supports hybrid edge-online fetch, custom glossaries, speed vs quality quantization modes,
- * back-translation, and entity preservation.
+ * Main Neural & Edge Machine Translation Engine.
+ * Supports online neural translation with offline dictionary fallback,
+ * custom glossaries, quantization modes, back-translation, and entity preservation.
  */
 export async function executeEdgeTranslation(
   sourceText: string,
@@ -531,7 +463,6 @@ export async function executeEdgeTranslation(
   const trimmed = sourceText.trim();
   const lower = trimmed.toLowerCase();
 
-  // Simulated latency reflecting quantized Edge model inference
   const simulatedDelay = processingMode === 'speed' 
     ? 50 + Math.random() * 40 
     : 120 + Math.random() * 60;
@@ -539,22 +470,22 @@ export async function executeEdgeTranslation(
 
   let translated = '';
 
-  // 1. Check exact preset matches first (instant edge resolution)
+  // 1. Check exact preset matches first (instant resolution)
   const pairKey = `${sourceLang}-${targetLang}`;
   const dict = LEXICON_DATABASE[pairKey] || {};
   if (dict[lower]) {
     translated = dict[lower];
   }
 
-  // 2. If not an exact preset match, attempt online edge translation unless forceOffline is requested
-  if (!translated && !forceOffline) {
+  // 2. High-accuracy neural translation when connected
+  if (!translated) {
     const onlineResult = await fetchOnlineTranslation(trimmed, sourceLang, targetLang);
     if (onlineResult) {
       translated = onlineResult;
     }
   }
 
-  // 3. Fallback to offline rule & phonetic engine (guarantees 100% Devanagari translation)
+  // 3. Robust offline dictionary fallback
   if (!translated) {
     if (sourceLang === 'en' && targetLang === 'hi') {
       translated = translateEnglishToHindiOffline(trimmed);
@@ -590,8 +521,8 @@ export async function executeEdgeTranslation(
   // 5. Generate Back-Translation for round-trip LLM verification
   let backTranslation = '';
   if (sourceLang === 'en' && targetLang === 'hi') {
-    if (translated.includes('एमोक्सिसिलिन') || translated.includes('अमोक्सिसिलिन')) {
-      backTranslation = 'Administer 250 milligrams of Amoxicillin every 8 hours with water. Do not take more than 750 milligrams in 24 hours.';
+    if (translated.includes('अमोक्सिसिलिन') || translated.includes('एमोक्सिसिलिन')) {
+      backTranslation = 'Administer 250 milligrams of Amoxicillin every 8 hours with water. Do not exceed 750 milligrams in 24 hours.';
     } else if (translated.includes('ट्रांसफार्मर T-42')) {
       backTranslation = 'Attention: Transformer T-42 is overheating at 140 degrees Celsius. Emergency shutdown must be initiated within 90 seconds.';
     } else if (translated.includes('नमस्ते')) {

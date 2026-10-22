@@ -8,7 +8,7 @@ const BENCHMARK_KEY = 'lingua_edge_benchmark_v2';
 const MODELS_KEY = 'lingua_edge_models_v2';
 
 export const DEFAULT_SETTINGS: AppSettings = {
-  offlineOnlyMode: true,
+  offlineOnlyMode: false,
   processingMode: 'speed',
   modelSelection: 'Whisper-Tiny + MarianMT + Qwen-0.5B (Edge INT4)',
   quantizationProfile: 'INT4',
