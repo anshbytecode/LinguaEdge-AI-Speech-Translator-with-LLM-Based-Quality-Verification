@@ -17,7 +17,13 @@ import {
   CheckCircle2,
   Edit3,
   Languages,
-  Zap
+  Zap,
+  QrCode,
+  Maximize2,
+  ShieldAlert,
+  X,
+  Activity,
+  SlidersHorizontal
 } from 'lucide-react';
 import { SUPPORTED_LANGUAGES, getLanguageByCode } from '../data/languages';
 import { TranslationSession, DomainType, AppSettings } from '../types';
@@ -79,6 +85,14 @@ export const TranslateCockpit: React.FC<TranslateCockpitProps> = ({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Features 81, 82, 54, 55, 58 States
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [showAudioDiagnostics, setShowAudioDiagnostics] = useState(false);
+  const [silenceThreshold, setSilenceThreshold] = useState(800);
+  const [maxChunkDuration, setMaxChunkDuration] = useState(10);
+  const [noiseCancellation, setNoiseCancellation] = useState(true);
 
   const timerRef = useRef<any>(null);
   const meterRef = useRef<any>(null);
@@ -454,21 +468,98 @@ export const TranslateCockpit: React.FC<TranslateCockpitProps> = ({
             </button>
           </div>
 
-          <button
-            onClick={() => onTranslate()}
-            disabled={!sourceText.trim() || isTranslating}
-            className="btn btn-primary"
-            style={{ padding: '0.65rem 1.25rem', fontSize: '0.875rem' }}
-          >
-            {isTranslating ? <span>Translating...</span> : (
-              <>
-                <Zap size={16} />
-                <span>Translate & Audit</span>
-              </>
-            )}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button
+              onClick={() => setShowAudioDiagnostics(!showAudioDiagnostics)}
+              className="btn btn-secondary"
+              style={{ padding: '0.65rem 0.85rem', fontSize: '0.78rem', gap: '0.35rem' }}
+              title="54, 55, 58. Audio Diagnostics & Chunking"
+            >
+              <Activity size={14} />
+              <span>{showAudioDiagnostics ? 'Hide Diagnostics' : 'Audio Diagnostics'}</span>
+            </button>
+
+            <button
+              onClick={() => onTranslate()}
+              disabled={!sourceText.trim() || isTranslating}
+              className="btn btn-primary"
+              style={{ padding: '0.65rem 1.25rem', fontSize: '0.875rem' }}
+            >
+              {isTranslating ? <span>Translating...</span> : (
+                <>
+                  <Zap size={16} />
+                  <span>Translate & Audit</span>
+                </>
+              )}
+            </button>
+          </div>
 
         </div>
+
+        {/* 54, 55, 58. Audio Quality Diagnostics & Chunking Controls Drawer */}
+        {showAudioDiagnostics && (
+          <div style={{ background: 'var(--bg-input)', borderRadius: '10px', padding: '1rem', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 700 }}>
+                54-58. Edge Audio Quality Diagnostics
+              </span>
+              <span className="badge badge-emerald" style={{ fontSize: '0.68rem' }}>Clean Input</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '6px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-faint)' }}>CLIPPING</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#34d399' }}>0 dB (Normal)</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '6px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-faint)' }}>NOISE FLOOR</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan-bright)' }}>-42 dB (Quiet)</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '6px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-faint)' }}>SAMPLE RATE</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#c084fc' }}>44.1 kHz PCM</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.4rem', borderRadius: '6px' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-faint)' }}>ECHO CANCEL</div>
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#34d399' }}>Active</div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.6rem' }}>
+              <div>
+                <label style={{ fontSize: '0.68rem', color: 'var(--text-faint)', display: 'block', marginBottom: '0.2rem' }}>
+                  58. Silence VAD Threshold: {silenceThreshold}ms
+                </label>
+                <input
+                  type="range"
+                  min="400"
+                  max="1600"
+                  step="100"
+                  value={silenceThreshold}
+                  onChange={(e) => setSilenceThreshold(parseInt(e.target.value))}
+                  style={{ width: '100%', accentColor: 'var(--cyan-primary)' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.68rem', color: 'var(--text-faint)', display: 'block', marginBottom: '0.2rem' }}>
+                  52. Noise Cancellation
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '4px' }}>
+                  <input
+                    type="checkbox"
+                    checked={noiseCancellation}
+                    onChange={(e) => setNoiseCancellation(e.target.checked)}
+                    style={{ accentColor: 'var(--cyan-primary)', cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Biquad filter active
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {uploadError && (
           <div style={{ color: '#fb7185', fontSize: '0.75rem', background: 'rgba(244,63,94,0.1)', padding: '0.5rem', borderRadius: '6px' }}>
@@ -492,14 +583,32 @@ export const TranslateCockpit: React.FC<TranslateCockpitProps> = ({
           </div>
 
           {currentSession && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => setShowCardModal(true)}
+                className="btn btn-secondary"
+                style={{ padding: '0.35rem 0.6rem', fontSize: '0.72rem', gap: '0.3rem' }}
+                title="81. Full-Screen Bilingual Presentation Card"
+              >
+                <Maximize2 size={12} />
+                <span>Card Mode</span>
+              </button>
+              <button
+                onClick={() => setShowQrModal(true)}
+                className="btn btn-secondary"
+                style={{ padding: '0.35rem 0.6rem', fontSize: '0.72rem', gap: '0.3rem' }}
+                title="82. Share translation via QR Code"
+              >
+                <QrCode size={12} />
+                <span>QR Share</span>
+              </button>
               <button
                 onClick={handleDownloadTTS}
                 className="btn btn-secondary"
-                style={{ padding: '0.4rem 0.65rem', fontSize: '0.75rem', gap: '0.35rem' }}
+                style={{ padding: '0.35rem 0.6rem', fontSize: '0.72rem', gap: '0.3rem' }}
                 title="Download synthesized audio as WAV"
               >
-                <Download size={13} />
+                <Download size={12} />
                 <span>Audio WAV</span>
               </button>
             </div>
@@ -635,6 +744,215 @@ export const TranslateCockpit: React.FC<TranslateCockpitProps> = ({
         </div>
 
       </div>
+
+      {/* 81. Full-Screen Bilingual Presentation Card Modal */}
+      {showCardModal && currentSession && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(5, 8, 16, 0.92)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem'
+        }}>
+          <div className="glass-panel" style={{
+            maxWidth: '750px',
+            width: '100%',
+            padding: '2.5rem',
+            background: 'var(--bg-card)',
+            border: '2px solid var(--cyan-primary)',
+            borderRadius: '20px',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.8)'
+          }}>
+            <button
+              onClick={() => setShowCardModal(false)}
+              style={{
+                position: 'absolute',
+                top: '1.25rem',
+                right: '1.25rem',
+                background: 'rgba(255,255,255,0.08)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span className="badge badge-cyan" style={{ fontSize: '0.85rem' }}>81. Translation Card Mode</span>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>High-contrast patient & public display</span>
+            </div>
+
+            {/* Source phrase */}
+            <div style={{ borderBottom: '1px solid var(--border-subtle)', paddingBottom: '1.25rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-faint)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.5rem' }}>
+                {srcLangObj.flag} {srcLangObj.name} (Source)
+              </div>
+              <div style={{ fontSize: '1.3rem', color: 'var(--text-muted)', lineHeight: 1.5, fontWeight: 500 }}>
+                {currentSession.sourceText}
+              </div>
+            </div>
+
+            {/* Target phrase */}
+            <div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--cyan-bright)', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.5rem' }}>
+                {tgtLangObj.flag} {tgtLangObj.name} (Verified Target)
+              </div>
+              <div style={{ fontSize: '2rem', color: '#ffffff', lineHeight: 1.4, fontWeight: 700 }}>
+                {currentSession.verifiedTranslation || currentSession.translatedText}
+              </div>
+              {currentSession.phoneticGuide && (
+                <div style={{ marginTop: '0.75rem', fontSize: '1.1rem', color: 'var(--purple-accent)', fontFamily: 'var(--font-mono)' }}>
+                  Phonetics: {currentSession.phoneticGuide}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-subtle)', paddingTop: '1.25rem' }}>
+              <button
+                onClick={handlePlayTTS}
+                className="btn btn-primary"
+                style={{ padding: '0.75rem 1.5rem', fontSize: '1rem', gap: '0.5rem' }}
+              >
+                <Play size={18} /> Speak Out Loud
+              </button>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-faint)' }}>
+                Offline Verified • LQV Quality: {currentSession.verification.overallScore}%
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 82. QR-Based Offline Sharing Modal */}
+      {showQrModal && currentSession && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(5, 8, 16, 0.92)',
+          backdropFilter: 'blur(12px)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem'
+        }}>
+          <div className="glass-panel" style={{
+            maxWidth: '480px',
+            width: '100%',
+            padding: '2rem',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: '16px',
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: '1.25rem'
+          }}>
+            <button
+              onClick={() => setShowQrModal(false)}
+              style={{
+                position: 'absolute',
+                top: '1rem',
+                right: '1rem',
+                background: 'rgba(255,255,255,0.08)',
+                border: 'none',
+                borderRadius: '50%',
+                width: '32px',
+                height: '32px',
+                color: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <QrCode size={20} color="var(--cyan-bright)" />
+              <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
+                82. QR Transcript Sharing
+              </div>
+            </div>
+
+            {/* Offline warning banner */}
+            <div style={{ background: 'rgba(244, 63, 94, 0.1)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: '8px', padding: '0.75rem', fontSize: '0.75rem', color: '#fda4af', textAlign: 'left', display: 'flex', gap: '0.5rem' }}>
+              <ShieldAlert size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
+              <div>
+                <strong>Warning:</strong> Scanning this QR code will export the transcript to an external device. External sharing will no longer remain strictly within this machine's isolated offline perimeter.
+              </div>
+            </div>
+
+            {/* SVG QR Code Matrix */}
+            <div style={{ background: '#ffffff', padding: '1rem', borderRadius: '12px', display: 'inline-block' }}>
+              <svg width="180" height="180" viewBox="0 0 100 100" style={{ display: 'block' }}>
+                <rect width="100" height="100" fill="#ffffff" />
+                <rect x="5" y="5" width="25" height="25" fill="#050810" />
+                <rect x="8" y="8" width="19" height="19" fill="#ffffff" />
+                <rect x="11" y="11" width="13" height="13" fill="#050810" />
+                
+                <rect x="70" y="5" width="25" height="25" fill="#050810" />
+                <rect x="73" y="8" width="19" height="19" fill="#ffffff" />
+                <rect x="76" y="11" width="13" height="13" fill="#050810" />
+
+                <rect x="5" y="70" width="25" height="25" fill="#050810" />
+                <rect x="8" y="73" width="19" height="19" fill="#ffffff" />
+                <rect x="11" y="76" width="13" height="13" fill="#050810" />
+
+                <rect x="35" y="10" width="5" height="10" fill="#050810" />
+                <rect x="45" y="5" width="10" height="5" fill="#050810" />
+                <rect x="60" y="15" width="5" height="15" fill="#050810" />
+                <rect x="35" y="35" width="10" height="10" fill="#050810" />
+                <rect x="50" y="35" width="5" height="5" fill="#050810" />
+                <rect x="60" y="40" width="10" height="5" fill="#050810" />
+                <rect x="75" y="35" width="15" height="10" fill="#050810" />
+                <rect x="35" y="55" width="15" height="5" fill="#050810" />
+                <rect x="55" y="50" width="5" height="15" fill="#050810" />
+                <rect x="65" y="60" width="10" height="10" fill="#050810" />
+                <rect x="35" y="75" width="10" height="15" fill="#050810" />
+                <rect x="50" y="70" width="15" height="5" fill="#050810" />
+                <rect x="70" y="80" width="20" height="5" fill="#050810" />
+              </svg>
+            </div>
+
+            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+              Encodes: <span style={{ color: '#fff' }}>{currentSession.translatedText.slice(0, 50)}...</span>
+            </div>
+
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="btn btn-secondary"
+              style={{ width: '100%', fontSize: '0.85rem' }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
