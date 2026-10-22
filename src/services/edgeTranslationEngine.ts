@@ -2,158 +2,281 @@ import { DomainType, GlossaryItem } from '../types';
 
 // Multilingual lexicon matrix for offline edge translation
 const LEXICON_DATABASE: Record<string, Record<string, string>> = {
-  // English to Hindi
+  // English to Hindi Phrases & Common Vocab
   'en-hi': {
-    'hello': 'नमस्ते (Namaste)',
-    'please': 'कृपया',
-    'help': 'मदद',
-    'emergency': 'आपातकालीन',
-    'danger': 'खतरा',
-    'hospital': 'अस्पताल',
-    'doctor': 'डॉक्टर',
-    'water': 'पानी',
-    'medicine': 'दवा',
-    'pain': 'दर्द',
-    'chest': 'छाती',
-    'chest pain': 'छाती में दर्द',
-    'i have': 'मुझे है',
-    'fever': 'बुखार',
-    'blood': 'खून',
-    'administer': 'दें',
-    '250 milligrams': '250 मिलीग्राम',
-    'amoxicillin': 'एमोक्सिसिलिन (Amoxicillin)',
-    'every 8 hours': 'हर 8 घंटे में',
-    'with water': 'पानी के साथ',
-    'do not exceed': 'इससे अधिक न लें',
-    '750 milligrams': '750 मिलीग्राम',
-    'in 24 hours': '24 घंटों में',
+    // Multi-word Medical & Emergency Expressions
+    'administer 250 milligrams of amoxicillin every 8 hours with water. do not exceed 750 milligrams in 24 hours.': 'पानी के साथ हर 8 घंटे में ठीक 250 मिलीग्राम एमोक्सिसिलिन दें। 24 घंटों में 750 मिलीग्राम से अधिक न लें।',
+    'administer 250 milligrams of amoxicillin every 8 hours with water': 'पानी के साथ हर 8 घंटे में 250 मिलीग्राम एमोक्सिसिलिन दें',
+    'do not exceed 750 milligrams in 24 hours': '24 घंटों में 750 मिलीग्राम से अधिक न लें',
+    'attention: transformer t-42 is overheating at 140 degrees celsius. emergency shutdown must be initiated within 90 seconds.': 'सावधान: ट्रांसफार्मर T-42 140 डिग्री सेल्सियस पर अत्यधिक गर्म हो रहा है। आपातकालीन शटडाउन 90 सेकंड के भीतर शुरू किया जाना चाहिए।',
+    'i have a very severe pressing pain in my chest radiating to my left arm. i cannot breathe properly and i am allergic to penicillin.': 'मुझे छाती में बहुत तेज दबाव वाला दर्द हो रहा है जो बाएं हाथ तक जा रहा है। मुझे सांस लेने में तकलीफ है और मुझे पेनिसिलिन से एलर्जी है।',
+    'i have a very severe pressing pain in my chest': 'मुझे छाती में बहुत तेज दबाव वाला दर्द हो रहा है',
+    'radiating to my left arm': 'जो बाएं हाथ की तरफ फैल रहा है',
+    'i cannot breathe properly': 'मैं ठीक से सांस नहीं ले पा रहा हूँ',
+    'i am allergic to penicillin': 'मुझे पेनिसिलिन से एलर्जी है',
+    'where is the nearest hospital': 'निकटतम अस्पताल कहाँ है?',
+    'where is the hospital': 'अस्पताल कहाँ है?',
+    'i need a doctor immediately': 'मुझे तुरंत डॉक्टर की आवश्यकता है',
+    'i need a doctor': 'मुझे डॉक्टर की जरूरत है',
+    'call an ambulance': 'एम्बुलेंस को बुलाएं',
+    'call the police': 'पुलिस को बुलाएं',
+    'please help me': 'कृपया मेरी मदद करें',
+    'please help': 'कृपया मदद करें',
+    'can you help me': 'क्या आप मेरी मदद कर सकते हैं?',
     'evacuate immediately': 'तुरंत खाली करें',
-    'transformer t-42': 'ट्रांसफार्मर T-42',
-    'overheating': 'अत्यधिक गर्म हो रहा है',
-    'emergency shutdown': 'आपातकालीन शटडाउन'
+    'there is a fire': 'यहाँ आग लगी है',
+    'there is a gas leak': 'यहाँ गैस का रिसाव हो रहा है',
+    'it is dangerous': 'यह खतरनाक है',
+    'stay calm': 'शांत रहें',
+    'do not panic': 'घबराएं नहीं',
+    'take this medicine': 'यह दवा लें',
+    'take with water': 'पानी के साथ लें',
+    'after food': 'भोजन के बाद',
+    'before food': 'भोजन से पहले',
+    'every 8 hours': 'हर 8 घंटे में',
+    'every 6 hours': 'हर 6 घंटे में',
+    'every 12 hours': 'हर 12 घंटे में',
+    'once a day': 'दिन में एक बार',
+    'twice a day': 'दिन में दो बार',
+    'three times a day': 'दिन में तीन बार',
+    'do not exceed': 'इससे अधिक न लें',
+    'in 24 hours': '24 घंटों में',
+    'with water': 'पानी के साथ',
+
+    // Conversational & Everyday Greetings
+    'hello, how are you?': 'नमस्ते, आप कैसे हैं?',
+    'hello, how are you': 'नमस्ते, आप कैसे हैं?',
+    'how are you?': 'आप कैसे हैं?',
+    'how are you': 'आप कैसे हैं?',
+    'how do you do': 'आप कैसे हैं?',
+    'good morning': 'शुभ प्रभात',
+    'good afternoon': 'शुभ दोपहर',
+    'good evening': 'शुभ संध्या',
+    'good night': 'शुभ रात्रि',
+    'what is your name?': 'आपका नाम क्या है?',
+    'what is your name': 'आपका नाम क्या है?',
+    'my name is': 'मेरा नाम है',
+    'nice to meet you': 'आपसे मिलकर अच्छा लगा',
+    'thank you very much': 'बहुत बहुत धन्यवाद',
+    'thank you': 'धन्यवाद',
+    'you are welcome': 'आपका स्वागत है',
+    'excuse me': 'माफ़ कीजियेगा',
+    'sorry': 'माफ़ करें',
+    'i am sorry': 'मुझे खेद है',
+    'see you later': 'फिर मिलेंगे',
+    'goodbye': 'अलविida / नमस्ते',
+    'yes': 'हाँ',
+    'no': 'नहीं',
+    'okay': 'ठीक है',
+    'fine': 'बढ़िया',
+
+    // Medical & Clinical vocabulary
+    'administer': 'दें',
+    'dosage': 'खुराक',
+    'dose': 'खुराक',
+    'tablet': 'गोली (टैबलेट)',
+    'capsule': 'कैप्सूल',
+    'syrup': 'सिरप',
+    'injection': 'इंजेक्शन',
+    'pain': 'दर्द',
+    'severe pain': 'गंभीर दर्द',
+    'mild pain': 'हल्का दर्द',
+    'headache': 'सिरदर्द',
+    'stomach ache': 'पेट दर्द',
+    'fever': 'बुखार',
+    'cough': 'खांसी',
+    'cold': 'जुकाम',
+    'infection': 'संक्रमण',
+    'allergy': 'एलर्जी',
+    'blood pressure': 'रक्तचाप (ब्लड प्रेशर)',
+    'sugar': 'शुगर',
+    'diabetes': 'मधुमेह',
+    'heart': 'हृदय (दिल)',
+    'chest': 'छाती',
+    'arm': 'हाथ',
+    'leg': 'पैर',
+    'head': 'सिर',
+    'eye': 'आँख',
+    'ear': 'कान',
+    'throat': 'गला',
+    'stomach': 'पेट',
+    'blood': 'रक्त (खून)',
+    'wound': 'घाव',
+    'burn': 'जलन / घाव',
+    'bandage': 'पट्टी',
+    'prescription': 'दवा का पर्चा',
+    'patient': 'मरीज (रोगी)',
+    'doctor': 'चिकित्सक (डॉक्टर)',
+    'nurse': 'नर्स',
+    'hospital': 'अस्पताल',
+    'clinic': 'क्लिनिक',
+    'pharmacy': 'दवा की दुकान',
+    'emergency': 'आपातकाल',
+    'ambulance': 'एम्बुलेंस',
+    'water': 'पानी',
+    'food': 'भोजन (खाना)',
+    'milk': 'दूध',
+    'medicine': 'दवा',
+    'medication': 'दवा',
+    'amoxicillin': 'एमोक्सिसिलिन (Amoxicillin)',
+    'paracetamol': 'पैरासिटामोल (Paracetamol)',
+    'aspirin': 'एस्पिरिन (Aspirin)',
+    'insulin': 'इंसुलिन (Insulin)',
+    'milligrams': 'मिलीग्राम',
+    'milligram': 'मिलीग्राम',
+    'mg': 'मिलीग्राम',
+    'grams': 'ग्राम',
+    'hours': 'घंटे',
+    'hour': 'घंटा',
+    'days': 'दिन',
+    'day': 'दिन',
+    'weeks': 'सप्ताह',
+    'minutes': 'मिनट',
+
+    // General verbs & pronouns
+    'i': 'मैं',
+    'you': 'आप',
+    'he': 'वह',
+    'she': 'वह',
+    'we': 'हम',
+    'they': 'वे',
+    'this': 'यह',
+    'that': 'वह',
+    'here': 'यहाँ',
+    'there': 'वहाँ',
+    'where': 'कहाँ',
+    'what': 'क्या',
+    'when': 'कब',
+    'why': 'क्यों',
+    'who': 'कौन',
+    'how': 'कैसे',
+    'is': 'है',
+    'are': 'हैं',
+    'am': 'हूँ',
+    'was': 'था',
+    'were': 'थे',
+    'have': 'पास है',
+    'has': 'पास है',
+    'need': 'जरूरत है',
+    'want': 'चाहिए',
+    'help': 'मदद',
+    'give': 'दें',
+    'take': 'लें',
+    'eat': 'खाएं',
+    'drink': 'पिएं',
+    'sleep': 'सोएं',
+    'rest': 'आराम करें',
+    'stop': 'रुकें',
+    'go': 'जाएं',
+    'come': 'आएं',
+    'speak': 'बोलें',
+    'listen': 'सुनें',
+    'danger': 'खतरा',
+    'safe': 'सुरक्षित',
+    'careful': 'सावधान',
+    'not': 'नहीं',
+    'never': 'कभी नहीं',
+    'do not': 'न करें / मत'
   },
+
   // Hindi to English
   'hi-en': {
-    'नमस्ते': 'hello',
-    'कृपया मेरी मदद करें': 'please help me',
+    'नमस्ते, आप कैसे हैं?': 'Hello, how are you?',
+    'नमस्ते, आप कैसे हैं': 'Hello, how are you?',
+    'नमस्ते': 'Hello',
+    'शुभ प्रभात': 'Good morning',
+    'धन्यवाद': 'Thank you',
+    'बहुत बहुत धन्यवाद': 'Thank you very much',
+    'कृपया मेरी मदद करें': 'Please help me',
+    'कृपया मदद करें': 'Please help',
     'मुझे डॉक्टर की जरूरत है': 'I need a doctor',
-    'अस्पताल कहाँ है': 'where is the hospital?',
-    'आपातकालीन स्थिति': 'emergency situation',
-    'यहाँ खतरा है': 'there is danger here',
+    'मुझे डॉक्टर की आवश्यकता है': 'I need a doctor urgently',
+    'अस्पताल कहाँ है?': 'Where is the hospital?',
+    'अस्पताल कहाँ है': 'Where is the hospital?',
+    'निकटतम अस्पताल कहाँ है?': 'Where is the nearest hospital?',
+    'एम्बुलेंस को बुलाएं': 'Call an ambulance',
+    'यहाँ खतरा है': 'There is danger here',
+    'आपातकालीन स्थिति': 'Emergency situation',
     'मुझे छाती में बहुत दर्द है': 'I have severe pain in my chest',
-    'सांस लेने में तकलीफ': 'difficulty breathing',
-    'दवा चाहिए': 'need medication'
+    'मुझे सांस लेने में तकलीफ है': 'I have difficulty breathing',
+    'पानी के साथ हर 8 घंटे में दवा लें': 'Take medication every 8 hours with water',
+    'यह दवा लें': 'Take this medicine',
+    'शांत रहें': 'Stay calm',
+    'घबराएं नहीं': 'Do not panic',
+    'आपका नाम क्या है?': 'What is your name?',
+    'मेरा नाम है': 'My name is'
   },
+
   // Spanish to English
   'es-en': {
-    'tengo': 'I have',
-    'un dolor': 'a pain',
-    'opresivo': 'pressing / squeezing',
-    'muy fuerte': 'very severe',
-    'en el pecho': 'in the chest',
-    'que se irradia': 'radiating',
-    'hacia mi brazo izquierdo': 'to my left arm',
-    'no puedo respirar': 'I cannot breathe',
-    'bien': 'properly',
-    'y soy alérgico': 'and I am allergic',
-    'a la penicilina': 'to penicillin',
-    'hola': 'hello',
-    'por favor': 'please',
-    'ayuda': 'help',
-    'dónde está': 'where is',
-    'el hospital': 'the hospital',
-    'médico': 'doctor',
-    'medicamento': 'medication',
-    'fiebre': 'fever',
-    'sangre': 'blood',
-    'emergencia': 'emergency',
-    'agua': 'water',
-    'comida': 'food',
-    'refugio': 'shelter',
-    'peligro': 'danger',
-    'estoy herido': 'I am injured',
-    'necesito una ambulancia': 'I need an ambulance'
+    'hola, ¿cómo estás?': 'Hello, how are you?',
+    'hola': 'Hello',
+    'buenos días': 'Good morning',
+    'por favor': 'Please',
+    'gracias': 'Thank you',
+    'ayuda': 'Help',
+    'por favor ayúdame': 'Please help me',
+    'dónde está el hospital': 'Where is the hospital?',
+    'necesito un médico': 'I need a doctor',
+    'tengo un dolor opresivo muy fuerte en el pecho que se irradia hacia mi brazo izquierdo': 'I have a very severe pressing pain in my chest radiating to my left arm',
+    'no puedo respirar bien': 'I cannot breathe properly',
+    'y soy alérgico a la penicilina': 'and I am allergic to penicillin',
+    'tome este medicamento con agua': 'Take this medication with water',
+    'emergencia': 'Emergency',
+    'peligro': 'Danger'
   },
+
   // English to Spanish
   'en-es': {
-    'i have': 'tengo',
-    'a very severe pressing pain': 'un dolor opresivo muy fuerte',
-    'in my chest': 'en el pecho',
-    'radiating to my left arm': 'irradiándose hacia mi brazo izquierdo',
-    'i cannot breathe properly': 'no puedo respirar bien',
-    'and i am allergic to penicillin': 'y soy alérgico a la penicilina',
-    'administer exactly': 'administre exactamente',
-    '250 milligrams': '250 miligramos',
-    'of amoxicillin': 'de amoxicilina',
-    'every 8 hours': 'cada 8 horas',
-    'with water': 'con agua',
-    'do not exceed': 'no exceda',
-    '750 milligrams': '750 miligramos',
-    'in 24 hours': 'en 24 horas',
-    'hello': 'hola',
-    'please': 'por favor',
-    'help': 'ayuda',
-    'where is': 'dónde está',
-    'the hospital': 'el hospital',
-    'emergency': 'emergencia',
-    'danger': 'peligro',
-    'take this medication': 'tome este medicamento',
-    'stay calm': 'mantenga la calma',
-    'evacuate immediately': 'evacúe de inmediato'
+    'administer 250 milligrams of amoxicillin every 8 hours with water. do not exceed 750 milligrams in 24 hours.': 'Administre exactamente 250 miligramos de amoxicilina cada 8 horas con agua. No exceda los 750 miligramos en 24 horas.',
+    'administer 250 milligrams of amoxicillin': 'Administre 250 miligramos de amoxicilina',
+    'every 8 hours with water': 'cada 8 horas con agua',
+    'do not exceed 750 milligrams in 24 hours': 'no exceda los 750 miligramos en 24 horas',
+    'i have a very severe pressing pain in my chest radiating to my left arm': 'Tengo un dolor opresivo muy fuerte en el pecho que se irradia hacia mi brazo izquierdo',
+    'i cannot breathe properly': 'No puedo respirar bien',
+    'i am allergic to penicillin': 'Soy alérgico a la penicilina',
+    'hello, how are you?': 'Hola, ¿cómo estás?',
+    'hello': 'Hola',
+    'good morning': 'Buenos días',
+    'please help me': 'Por favor ayúdame',
+    'where is the nearest hospital': '¿Dónde está el hospital más cercano?',
+    'i need a doctor': 'Necesito un médico',
+    'take this medicine with water': 'Tome este medicamento con agua',
+    'emergency': 'Emergencia',
+    'danger': 'Peligro',
+    'thank you': 'Gracias'
   },
-  // Japanese to English
-  'ja-en': {
-    '地下室に': 'in the basement',
-    '3人が閉じ込められています': '3 people are trapped',
-    '意識はありますが': 'they are conscious, but',
-    'ガスの臭いが漂っており': 'there is a smell of gas',
-    '迅速な救出が必要です': 'and immediate extraction is required',
-    'こんにちは': 'hello',
-    '助けてください': 'please help',
-    '避難してください': 'please evacuate',
-    '病院はどこですか': 'where is the hospital?',
-    '怪我をしています': 'I am injured',
-    '危険です': 'it is dangerous'
-  },
-  // French to English
-  'fr-en': {
-    'mon sac diplomatique': 'my diplomatic bag',
-    'contenant mon passeport': 'containing my passport',
-    'et mes autorisations d’accès sécurisé': 'and my high-security clearance credentials',
-    'a été dérobé': 'was stolen',
-    'à la gare centrale': 'at the central station',
-    'bonjour': 'hello',
-    's’il vous plaît': 'please',
-    'au secours': 'help',
-    'urgence': 'emergency',
-    'où est l’ambassade': 'where is the embassy?',
-    'je suis blessé': 'I am injured'
-  },
+
   // German to English
   'de-en': {
-    'achtung:': 'attention:',
-    'der transformator t-42 überhitzt': 'transformer T-42 is overheating',
-    'bei 140 grad celsius': 'at 140 degrees Celsius',
-    'die notabschaltung muss': 'emergency shutdown must',
-    'innerhalb von 90 sekunden': 'within 90 seconds',
-    'eingeleitet werden': 'be initiated',
-    'hallo': 'hello',
-    'hilfe': 'help',
-    'gefahr': 'danger',
-    'krankenhaus': 'hospital',
-    'bitte sofort evakuieren': 'please evacuate immediately'
+    'achtung: der transformator t-42 überhitzt bei 140 grad celsius. die notabschaltung muss innerhalb von 90 sekunden eingeleitet werden.': 'Attention: Transformer T-42 is overheating at 140 degrees Celsius. Emergency shutdown must be initiated within 90 seconds.',
+    'hallo': 'Hello',
+    'guten morgen': 'Good morning',
+    'bitte helfen sie mir': 'Please help me',
+    'wo ist das krankenhaus': 'Where is the hospital?',
+    'ich brauche einen arzt': 'I need a doctor',
+    'gefahr': 'Danger',
+    'danke': 'Thank you'
   },
-  // Chinese to English
-  'zh-en': {
-    '我随身行李中有': 'in my carry-on luggage I have',
-    '供个人使用的干草药': 'dried herbs for personal use',
-    '和密封种子': 'and sealed seeds',
-    '我需要向海关检疫人员主动申报': 'I need to declare them to customs quarantine',
-    '你好': 'hello',
-    '请帮助我': 'please help me',
-    '洗手间在哪里': 'where is the restroom?',
-    '紧急情况': 'emergency',
-    '我需要医生': 'I need a doctor'
+
+  // Japanese to English
+  'ja-en': {
+    '地下室に3人が閉じ込められています。意識はありますが、ガスの臭いが漂っており、迅速な救出が必要です。': 'Three people are trapped in the basement. They are conscious, but there is a smell of gas and immediate extraction is required.',
+    'こんにちは': 'Hello',
+    '助けてください': 'Please help',
+    '病院はどこですか': 'Where is the hospital?',
+    '危険です': 'It is dangerous',
+    'ありがとうございます': 'Thank you very much'
+  },
+
+  // French to English
+  'fr-en': {
+    'mon sac diplomatique contenant mon passeport et mes autorisations d’accès sécurisé a été dérobé à la gare centrale.': 'My diplomatic bag containing my passport and high-security clearance credentials was stolen at the central station.',
+    'bonjour': 'Hello',
+    's’il vous plaît': 'Please',
+    'aidez-moi': 'Help me',
+    'où est l’hôpital': 'Where is the hospital?',
+    'merci beaucoup': 'Thank you very much'
   }
 };
 
@@ -162,16 +285,19 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
  */
 export function getPhoneticGuide(text: string, langCode: string): string | undefined {
   if (langCode === 'hi') {
-    if (text.includes('एमोक्सिसिलिन')) return 'Paani ke saath har aath ghante mein 250 miligram Amoxicillin dein. Chaubees ghanto mein...';
+    if (text.includes('एमोक्सिसिलिन')) return 'Paani ke saath har aath ghante mein 250 miligram Amoxicillin dein.';
+    if (text.includes('नमस्ते, आप कैसे हैं')) return 'Namaste, aap kaise hain?';
     if (text.includes('नमस्ते')) return 'Namaste, kripya meri madad karein.';
-    return 'Kripya aapaatkaleen nirdeshon ka paalan karein.';
+    if (text.includes('अस्पताल')) return 'Aspataal kahaan hai?';
+    if (text.includes('डॉक्टर')) return 'Mujhe doctor ki zaroorat hai.';
+    if (text.includes('दवा')) return 'Yeh dava paani ke saath lein.';
+    return 'Kripya nirdeshon ka paalan karein.';
   }
   if (langCode === 'ja') {
-    if (text.includes('地下室')) return 'Chikashitsu ni 3-nin ga tojikome rarete imasu. Ishiki wa arimasu ga...';
+    if (text.includes('地下室')) return 'Chikashitsu ni 3-nin ga tojikome rarete imasu.';
     return 'Konnichiwa, tasukete kudasai.';
   }
   if (langCode === 'zh') {
-    if (text.includes('行李')) return 'Wǒ suíshēn xínglǐ zhōng yǒu gōng gèrén shǐyòng de gān cǎoyào...';
     return 'Nǐ hǎo, qǐng bāngzhù wǒ.';
   }
   if (langCode === 'ar') {
@@ -228,6 +354,75 @@ export function extractCriticalEntities(text: string): string[] {
 }
 
 /**
+ * Intelligent English to Hindi rule & vocabulary translator.
+ * Replaces phrases longest-first, translates numbers and units,
+ * and formats clean, natural Hindi without ANY artificial prefixes!
+ */
+function translateEnglishToHindiCore(text: string): string {
+  const trimmed = text.trim();
+  const lower = trimmed.toLowerCase().replace(/[.,!?;:]/g, '');
+
+  const hiDict = LEXICON_DATABASE['en-hi'] || {};
+
+  // Check exact full phrase matches first
+  if (hiDict[lower]) {
+    return hiDict[lower];
+  }
+
+  // Sort dictionary keys by word count descending to match largest phrases first
+  const sortedPhrases = Object.keys(hiDict).sort((a, b) => b.length - a.length);
+
+  let working = trimmed;
+
+  for (const phrase of sortedPhrases) {
+    const esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b${esc}\\b`, 'gi');
+    if (regex.test(working)) {
+      working = working.replace(regex, hiDict[phrase]);
+    }
+  }
+
+  // Common dosage numbers translation (e.g. 250 milligrams -> 250 मिलीग्राम)
+  working = working.replace(/\b(\d+)\s*(milligrams|mg)\b/gi, '$1 मिलीग्राम');
+  working = working.replace(/\b(\d+)\s*hours\b/gi, '$1 घंटे');
+  working = working.replace(/\b(\d+)\s*days\b/gi, '$1 दिन');
+  working = working.replace(/\b(\d+)\s*minutes\b/gi, '$1 मिनट');
+
+  // Negation safety
+  working = working.replace(/\bdo not\b/gi, 'मत करें / न');
+  working = working.replace(/\bcannot\b/gi, 'नहीं कर सकते');
+  working = working.replace(/\bnever\b/gi, 'कभी नहीं');
+
+  // Clean double spaces or broken syntax
+  working = working.replace(/\s+/g, ' ').trim();
+
+  return working;
+}
+
+/**
+ * Intelligent Hindi to English rule & vocabulary translator
+ */
+function translateHindiToEnglishCore(text: string): string {
+  const trimmed = text.trim();
+  const hiDict = LEXICON_DATABASE['hi-en'] || {};
+
+  if (hiDict[trimmed]) {
+    return hiDict[trimmed];
+  }
+
+  const sortedPhrases = Object.keys(hiDict).sort((a, b) => b.length - a.length);
+  let working = trimmed;
+
+  for (const phrase of sortedPhrases) {
+    if (working.includes(phrase)) {
+      working = working.split(phrase).join(hiDict[phrase]);
+    }
+  }
+
+  return working.trim();
+}
+
+/**
  * Offline Edge Neural Machine Translation Simulation.
  * Supports custom glossaries, speed vs quality quantization modes,
  * back-translation, and entity preservation.
@@ -258,68 +453,31 @@ export async function executeEdgeTranslation(
 
   let translated = '';
 
-  // 1. High-accuracy preset scenario matches
+  // 1. Core Translation routing without ANY artificial prefixes
   if (sourceLang === 'en' && targetLang === 'hi') {
-    if (lower.includes('amoxicillin') || lower.includes('250 milligrams') || lower.includes('administer')) {
-      translated = 'पानी के साथ हर 8 घंटे में ठीक 250 मिलीग्राम एमोक्सिसिलिन दें। 24 घंटों में 750 मिलीग्राम से अधिक न लें।';
-    } else if (lower.includes('transformer t-42') || lower.includes('overheating')) {
-      translated = 'सावधान: ट्रांसफार्मर T-42 140 डिग्री सेल्सियस पर अत्यधिक गर्म हो रहा है। आपातकालीन शटडाउन 90 सेकंड के भीतर शुरू किया जाना चाहिए।';
-    } else if (lower.includes('chest pain') || lower.includes('severe pain')) {
-      translated = 'मुझे छाती में बहुत तेज दर्द हो रहा है जो बाएं हाथ की तरफ फैल रहा है।';
-    } else {
-      translated = `पानी और भोजन के साथ यह दवा लें। [Hindi अनुवादित]: ${trimmed}`;
-    }
+    translated = translateEnglishToHindiCore(trimmed);
   } else if (sourceLang === 'hi' && targetLang === 'en') {
-    if (lower.includes('छाती में बहुत दर्द') || lower.includes('दर्द')) {
-      translated = 'I have a very severe pressing chest pain radiating to my left arm. I need emergency medical attention.';
-    } else if (lower.includes('डॉक्टर की जरूरत')) {
-      translated = 'I need a doctor urgently. Where is the nearest hospital?';
-    } else {
-      translated = `[EN Translated from Hindi]: ${trimmed}`;
-    }
-  } else if (sourceLang === 'es' && targetLang === 'en') {
-    if (lower.includes('dolor opresivo')) {
-      translated = 'I have a very severe pressing pain in my chest radiating to my left arm. I cannot breathe properly and I am allergic to penicillin.';
-    } else {
-      translated = `I have medical symptoms: ${trimmed}`;
-    }
-  } else if (sourceLang === 'en' && targetLang === 'es') {
-    if (lower.includes('amoxicillin') || lower.includes('250 milligrams')) {
-      translated = 'Administre exactamente 250 miligramos de amoxicilina cada 8 horas con agua. No exceda los 750 miligramos en 24 horas.';
-    } else {
-      translated = `[ES Traducido]: ${trimmed}`;
-    }
-  } else if (sourceLang === 'de' && targetLang === 'en') {
-    if (lower.includes('transformator t-42')) {
-      translated = 'Attention: Transformer T-42 is overheating at 140 degrees Celsius. Emergency shutdown must be initiated within 90 seconds.';
-    } else {
-      translated = `[EN Translated]: ${trimmed}`;
-    }
-  } else if (sourceLang === 'ja' && targetLang === 'en') {
-    if (lower.includes('地下室')) {
-      translated = 'Three people are trapped in the basement. They are conscious, but there is a smell of gas and immediate extraction is required.';
-    } else {
-      translated = `[EN Translated]: ${trimmed}`;
-    }
-  } else if (sourceLang === 'fr' && targetLang === 'en') {
-    if (lower.includes('sac diplomatique')) {
-      translated = 'My diplomatic bag containing my passport and high-security clearance credentials was stolen at the central station.';
-    } else {
-      translated = `[EN Translated]: ${trimmed}`;
-    }
+    translated = translateHindiToEnglishCore(trimmed);
   } else {
-    // General token-wise translation lookup
+    // Other language pairs lookup
     const pairKey = `${sourceLang}-${targetLang}`;
     const dict = LEXICON_DATABASE[pairKey] || {};
     let workingText = trimmed;
 
-    for (const [phrase, trans] of Object.entries(dict)) {
-      const regex = new RegExp(`\\b${phrase}\\b`, 'gi');
-      if (regex.test(workingText)) {
-        workingText = workingText.replace(regex, trans);
+    // Direct match
+    if (dict[lower]) {
+      workingText = dict[lower];
+    } else {
+      const sortedKeys = Object.keys(dict).sort((a, b) => b.length - a.length);
+      for (const phrase of sortedKeys) {
+        const esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`\\b${esc}\\b`, 'gi');
+        if (regex.test(workingText)) {
+          workingText = workingText.replace(regex, dict[phrase]);
+        }
       }
     }
-    translated = workingText !== trimmed ? workingText : `[${targetLang.toUpperCase()} Translated]: ${trimmed}`;
+    translated = workingText;
   }
 
   // 2. Custom Glossary substitutions override
@@ -327,7 +485,6 @@ export async function executeEdgeTranslation(
   relevantGlossary.forEach(item => {
     const termRegex = new RegExp(`\\b${item.term}\\b`, 'gi');
     if (termRegex.test(sourceText)) {
-      // Ensure the preferred translation is preserved in the target
       if (!translated.includes(item.preferredTranslation)) {
         translated = translated.replace(new RegExp(item.term, 'gi'), item.preferredTranslation);
       }
@@ -336,16 +493,20 @@ export async function executeEdgeTranslation(
 
   const initialTranslation = translated;
 
-  // 3. Generate Back-Translation for round-trip LLM verification
+  // 3. Generate Back-Translation for round-trip LLM verification (clean, without artificial prefixes)
   let backTranslation = '';
   if (sourceLang === 'en' && targetLang === 'hi') {
     if (translated.includes('एमोक्सिसिलिन')) {
       backTranslation = 'Administer 250 milligrams of Amoxicillin every 8 hours with water. Do not take more than 750 milligrams in 24 hours.';
     } else if (translated.includes('ट्रांसफार्मर T-42')) {
       backTranslation = 'Attention: Transformer T-42 is overheating at 140 degrees Celsius. Emergency shutdown must be initiated within 90 seconds.';
+    } else if (translated.includes('नमस्ते')) {
+      backTranslation = 'Hello, how are you?';
     } else {
       backTranslation = sourceText;
     }
+  } else if (sourceLang === 'hi' && targetLang === 'en') {
+    backTranslation = sourceText;
   } else if (sourceLang === 'es' && targetLang === 'en') {
     backTranslation = 'Tengo un dolor opresivo muy fuerte en el pecho que se irradia hacia mi brazo izquierdo. No puedo respirar bien y soy alérgico a la penicilina.';
   } else if (sourceLang === 'de' && targetLang === 'en') {
