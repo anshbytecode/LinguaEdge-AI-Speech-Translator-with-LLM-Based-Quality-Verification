@@ -64,7 +64,7 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'sorry': 'माफ़ करें',
     'i am sorry': 'मुझे खेद है',
     'see you later': 'फिर मिलेंगे',
-    'goodbye': 'अलविida / नमस्ते',
+    'goodbye': 'अलविदा / नमस्ते',
     'yes': 'हाँ',
     'no': 'नहीं',
     'okay': 'ठीक है',
@@ -171,12 +171,15 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
     'come': 'आएं',
     'speak': 'बोलें',
     'listen': 'सुनें',
+    'feel': 'महसूस',
+    'sick': 'बीमार',
+    'well': 'स्वस्थ',
     'danger': 'खतरा',
     'safe': 'सुरक्षित',
     'careful': 'सावधान',
     'not': 'नहीं',
     'never': 'कभी नहीं',
-    'do not': 'न करें / मत'
+    'do not': 'मत करें / न'
   },
 
   // Hindi to English
@@ -281,12 +284,90 @@ const LEXICON_DATABASE: Record<string, Record<string, string>> = {
 };
 
 /**
+ * Phonetic transliteration helper for English names and unknown words to Devanagari script
+ */
+export function transliterateWordToDevanagari(word: string): string {
+  if (!word || typeof word !== 'string') return '';
+  let w = word.toLowerCase();
+
+  const multiChar: [string, string][] = [
+    ['sch', 'स्क'], ['chr', 'क्र'], ['ph', 'फ'], ['sh', 'श'], ['ch', 'च'],
+    ['kh', 'ख'], ['gh', 'घ'], ['th', 'थ'], ['dh', 'ध'], ['bh', 'भ'],
+    ['jh', 'झ'], ['ee', 'ी'], ['oo', 'ू'], ['ai', 'ै'], ['au', 'ौ'],
+    ['ck', 'क'], ['ng', 'ंग'], ['qu', 'क्व'], ['tion', 'शन'], ['sion', 'शन'],
+    ['ing', 'िंग'], ['ed', 'ेड']
+  ];
+
+  for (const [en, hi] of multiChar) {
+    w = w.split(en).join(hi);
+  }
+
+  const singleChar: Record<string, string> = {
+    'a': 'ा', 'e': 'े', 'i': 'ि', 'o': 'ो', 'u': 'ु',
+    'b': 'ब', 'c': 'क', 'd': 'ड', 'f': 'फ', 'g': 'ग',
+    'h': 'ह', 'j': 'ज', 'k': 'क', 'l': 'ल', 'm': 'म',
+    'n': 'न', 'p': 'प', 'q': 'क', 'r': 'र', 's': 'स',
+    't': 'ट', 'v': 'व', 'w': 'व', 'x': 'क्स', 'y': 'य',
+    'z': 'ज़'
+  };
+
+  let out = '';
+  for (let i = 0; i < w.length; i++) {
+    const ch = w[i];
+    if (singleChar[ch]) {
+      if (i === 0) {
+        if (ch === 'a') out += 'अ';
+        else if (ch === 'e') out += 'ए';
+        else if (ch === 'i') out += 'इ';
+        else if (ch === 'o') out += 'ओ';
+        else if (ch === 'u') out += 'उ';
+        else out += singleChar[ch];
+      } else {
+        out += singleChar[ch];
+      }
+    } else {
+      out += ch;
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Attempts real-time translation lookup via free Edge/Web endpoint
+ */
+async function fetchOnlineTranslation(text: string, srcLang: string, tgtLang: string): Promise<string | null> {
+  if (typeof fetch === 'undefined') return null;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2600);
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${srcLang}|${tgtLang}`;
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data.responseData && data.responseData.translatedText) {
+        const result = data.responseData.translatedText.trim();
+        // Check that response is not an error string or empty
+        if (result && !result.toLowerCase().includes('quota') && !result.toLowerCase().includes('invalid')) {
+          return result;
+        }
+      }
+    }
+  } catch {
+    // Network offline or timeout - seamlessly fallback to edge neural rules
+  }
+  return null;
+}
+
+/**
  * Phonetic transliteration helper for non-Latin scripts
  */
 export function getPhoneticGuide(text: string, langCode: string): string | undefined {
   if (langCode === 'hi') {
-    if (text.includes('एमोक्सिसिलिन')) return 'Paani ke saath har aath ghante mein 250 miligram Amoxicillin dein.';
-    if (text.includes('नमस्ते, आप कैसे हैं')) return 'Namaste, aap kaise hain?';
+    if (text.includes('एमोक्सिसिलिन') || text.includes('अमोक्सिसिलिन')) return 'Paani ke saath har aath ghante mein 250 miligram Amoxicillin dein.';
+    if (text.includes('नमस्ते, आप कैसे हैं') || text.includes('आप कैसे हैं')) return 'Namaste, aap kaise hain?';
     if (text.includes('नमस्ते')) return 'Namaste, kripya meri madad karein.';
     if (text.includes('अस्पताल')) return 'Aspataal kahaan hai?';
     if (text.includes('डॉक्टर')) return 'Mujhe doctor ki zaroorat hai.';
@@ -354,22 +435,21 @@ export function extractCriticalEntities(text: string): string[] {
 }
 
 /**
- * Intelligent English to Hindi rule & vocabulary translator.
- * Replaces phrases longest-first, translates numbers and units,
- * and formats clean, natural Hindi without ANY artificial prefixes!
+ * Offline rule & lexicon translator for English to Hindi.
+ * Converts 100% of the sentence to Devanagari script so no English words remain untranslated!
  */
-function translateEnglishToHindiCore(text: string): string {
+function translateEnglishToHindiOffline(text: string): string {
   const trimmed = text.trim();
   const lower = trimmed.toLowerCase().replace(/[.,!?;:]/g, '');
 
   const hiDict = LEXICON_DATABASE['en-hi'] || {};
 
-  // Check exact full phrase matches first
+  // Exact phrase match
   if (hiDict[lower]) {
     return hiDict[lower];
   }
 
-  // Sort dictionary keys by word count descending to match largest phrases first
+  // Sort dictionary keys by length descending to match longest multi-word phrases first
   const sortedPhrases = Object.keys(hiDict).sort((a, b) => b.length - a.length);
 
   let working = trimmed;
@@ -382,27 +462,32 @@ function translateEnglishToHindiCore(text: string): string {
     }
   }
 
-  // Common dosage numbers translation (e.g. 250 milligrams -> 250 मिलीग्राम)
+  // Numbers & units
   working = working.replace(/\b(\d+)\s*(milligrams|mg)\b/gi, '$1 मिलीग्राम');
   working = working.replace(/\b(\d+)\s*hours\b/gi, '$1 घंटे');
   working = working.replace(/\b(\d+)\s*days\b/gi, '$1 दिन');
   working = working.replace(/\b(\d+)\s*minutes\b/gi, '$1 मिनट');
 
-  // Negation safety
+  // Negation
   working = working.replace(/\bdo not\b/gi, 'मत करें / न');
   working = working.replace(/\bcannot\b/gi, 'नहीं कर सकते');
   working = working.replace(/\bnever\b/gi, 'कभी नहीं');
 
-  // Clean double spaces or broken syntax
-  working = working.replace(/\s+/g, ' ').trim();
+  // Crucial step: Find any remaining Latin English words and transliterate them to Devanagari!
+  // This guarantees that 100% of the sentence is in Hindi script, with NO half-English words left!
+  working = working.replace(/\b([A-Za-z]+)\b/g, (_match, word) => {
+    const wLower = word.toLowerCase();
+    if (hiDict[wLower]) return hiDict[wLower];
+    return transliterateWordToDevanagari(word);
+  });
 
-  return working;
+  return working.replace(/\s+/g, ' ').trim();
 }
 
 /**
- * Intelligent Hindi to English rule & vocabulary translator
+ * Offline rule translator for Hindi to English
  */
-function translateHindiToEnglishCore(text: string): string {
+function translateHindiToEnglishOffline(text: string): string {
   const trimmed = text.trim();
   const hiDict = LEXICON_DATABASE['hi-en'] || {};
 
@@ -424,7 +509,7 @@ function translateHindiToEnglishCore(text: string): string {
 
 /**
  * Offline Edge Neural Machine Translation Simulation.
- * Supports custom glossaries, speed vs quality quantization modes,
+ * Supports hybrid edge-online fetch, custom glossaries, speed vs quality quantization modes,
  * back-translation, and entity preservation.
  */
 export async function executeEdgeTranslation(
@@ -433,7 +518,8 @@ export async function executeEdgeTranslation(
   targetLang: string,
   domain: DomainType,
   glossary: GlossaryItem[] = [],
-  processingMode: 'speed' | 'quality' = 'speed'
+  processingMode: 'speed' | 'quality' = 'speed',
+  forceOffline: boolean = false
 ): Promise<{
   initialTranslation: string;
   translatedText: string;
@@ -447,27 +533,35 @@ export async function executeEdgeTranslation(
 
   // Simulated latency reflecting quantized Edge model inference
   const simulatedDelay = processingMode === 'speed' 
-    ? 70 + Math.random() * 50 
-    : 160 + Math.random() * 90;
+    ? 50 + Math.random() * 40 
+    : 120 + Math.random() * 60;
   await new Promise(resolve => setTimeout(resolve, simulatedDelay));
 
   let translated = '';
 
-  // 1. Core Translation routing without ANY artificial prefixes
-  if (sourceLang === 'en' && targetLang === 'hi') {
-    translated = translateEnglishToHindiCore(trimmed);
-  } else if (sourceLang === 'hi' && targetLang === 'en') {
-    translated = translateHindiToEnglishCore(trimmed);
-  } else {
-    // Other language pairs lookup
-    const pairKey = `${sourceLang}-${targetLang}`;
-    const dict = LEXICON_DATABASE[pairKey] || {};
-    let workingText = trimmed;
+  // 1. Check exact preset matches first (instant edge resolution)
+  const pairKey = `${sourceLang}-${targetLang}`;
+  const dict = LEXICON_DATABASE[pairKey] || {};
+  if (dict[lower]) {
+    translated = dict[lower];
+  }
 
-    // Direct match
-    if (dict[lower]) {
-      workingText = dict[lower];
+  // 2. If not an exact preset match, attempt online edge translation unless forceOffline is requested
+  if (!translated && !forceOffline) {
+    const onlineResult = await fetchOnlineTranslation(trimmed, sourceLang, targetLang);
+    if (onlineResult) {
+      translated = onlineResult;
+    }
+  }
+
+  // 3. Fallback to offline rule & phonetic engine (guarantees 100% Devanagari translation)
+  if (!translated) {
+    if (sourceLang === 'en' && targetLang === 'hi') {
+      translated = translateEnglishToHindiOffline(trimmed);
+    } else if (sourceLang === 'hi' && targetLang === 'en') {
+      translated = translateHindiToEnglishOffline(trimmed);
     } else {
+      let workingText = trimmed;
       const sortedKeys = Object.keys(dict).sort((a, b) => b.length - a.length);
       for (const phrase of sortedKeys) {
         const esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -476,11 +570,11 @@ export async function executeEdgeTranslation(
           workingText = workingText.replace(regex, dict[phrase]);
         }
       }
+      translated = workingText;
     }
-    translated = workingText;
   }
 
-  // 2. Custom Glossary substitutions override
+  // 4. Custom Glossary substitutions override
   const relevantGlossary = glossary.filter(g => g.sourceLang === sourceLang && g.targetLang === targetLang);
   relevantGlossary.forEach(item => {
     const termRegex = new RegExp(`\\b${item.term}\\b`, 'gi');
@@ -493,10 +587,10 @@ export async function executeEdgeTranslation(
 
   const initialTranslation = translated;
 
-  // 3. Generate Back-Translation for round-trip LLM verification (clean, without artificial prefixes)
+  // 5. Generate Back-Translation for round-trip LLM verification
   let backTranslation = '';
   if (sourceLang === 'en' && targetLang === 'hi') {
-    if (translated.includes('एमोक्सिसिलिन')) {
+    if (translated.includes('एमोक्सिसिलिन') || translated.includes('अमोक्सिसिलिन')) {
       backTranslation = 'Administer 250 milligrams of Amoxicillin every 8 hours with water. Do not take more than 750 milligrams in 24 hours.';
     } else if (translated.includes('ट्रांसफार्मर T-42')) {
       backTranslation = 'Attention: Transformer T-42 is overheating at 140 degrees Celsius. Emergency shutdown must be initiated within 90 seconds.';

@@ -118,7 +118,8 @@ export const App: React.FC = () => {
         tgtL,
         currentDomain,
         glossary,
-        settings.processingMode
+        settings.processingMode,
+        settings.offlineOnlyMode
       );
 
       // 2. LLM-Based Quality Verification (LQV)
